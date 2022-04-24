@@ -3,6 +3,9 @@ version: "3.4"
 # Development environment override
 services:
   php:
+    build:
+      context: .
+      target: symfony_php_debug
     volumes:
       # The "cached" option has no effect on Linux but improves performance on Mac
       - ./:/srv/app:rw,cached
@@ -12,6 +15,17 @@ services:
       # - /srv/app/var
     environment:
       APP_ENV: dev
+        # client_host=host.docker.internal
+      XDEBUG_MODE: debug
+      # XDEBUG_CONFIG: >-
+      #   xdebug.start_with_request=yes
+      #   xdebug.discover_client_host=yes
+      # This should correspond to the server declared in PHPStorm `Preferences | Languages & Frameworks | PHP | Servers`
+      # Then PHPStorm will use the corresponding path mappings
+      # PHP_IDE_CONFIG: serverName=symfony
+    extra_hosts:
+      # Ensure that host.docker.internal is correctly defined on Linux
+      - host.docker.internal:host-gateway
 
   caddy:
     volumes:
